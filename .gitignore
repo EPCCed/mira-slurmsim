@@ -3,3 +3,4 @@ persistent_store/*
 **/results/
 **/log/
 **/var/
+**/.ipynb_checkpoints/
