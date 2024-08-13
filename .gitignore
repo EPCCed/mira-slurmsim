@@ -1,2 +1,5 @@
 persistent_store
 persistent_store/*
+clusters/**/*
+!clusters/**/etc
+!clusters/**/workload
