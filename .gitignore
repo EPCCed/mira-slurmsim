@@ -6,3 +6,4 @@ persistent_store/*
 **/.ipynb_checkpoints/
 __pycache__
 __pycache__/*
+cirrus_cluster_realistic
