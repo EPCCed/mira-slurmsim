@@ -1,6 +1,8 @@
 services:
   slurm-mira:
     image: dvalts/slurm-sim-cirrus
+    container_name: slurmsim
+    hostname: slurmsim
     build:
       context: .
       dockerfile: Dockerfile
