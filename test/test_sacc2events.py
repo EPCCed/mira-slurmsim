@@ -1,6 +1,7 @@
 """
 Unit tests for sacc2eventsfile.py
 """
+import re
 from utils.sacc2eventsfile import convert_sacc_to_workload_row, _get_dtime
 
 def test_convert_sacc_to_workload():
@@ -21,10 +22,13 @@ def test_convert_sacc_to_workload():
     # Act
     result = convert_sacc_to_workload_row(input_row_dict, first_submit_time)
 
-    output_row = "-dt 2 -e submit_batch_job | -J jobid_1003 -sim-walltime 5 --uid=user4 -t 00:01:00 -n 1 --ntasks-per-node=1 -A account2 -p normal -q normal pseudo.job"
-
     # Assert
-    assert result == output_row
+    # Since the uid is generated with a random digit, we can't plainly
+    # assert that the strings match, but we can use a regex to check for
+    # a digit in a certin place (i.e. after UID)
+    assert re.match(r"-dt 2 -e submit_batch_job \| -J jobid_1003 -sim-walltime 142352 --uid=user\d+ -t 00:01:00 -n 21 --ntasks-per-node=36 -A account1 -p normal -q normal pseudo.job", result)
+    # Assert
+    #assert result == output_row
 
 def test_get_dtime_first():
     """Return the start time since simulator start for the

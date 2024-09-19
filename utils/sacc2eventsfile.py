@@ -26,22 +26,22 @@ def convert_sacc_to_workload_row(row: dict, first_submit_time: int) -> str:
         f"-dt {_get_dtime(row["Submit"], first_submit_time)} "
         f"-e submit_batch_job | "
         f"-J jobid_{row["JobID"]} "
-        f"-sim-walltime {_get_sim_walltime()} "
+        f"-sim-walltime {(row["ElapsedRaw"])} "
         f"--uid={_get_uid()} "
         f"-t {_get_request_time()} "
-        f"-n {_get_n_nodes()} "
-        f"--ntasks-per-node={_get_ntasks_per_node()} "
+        f"-n {int(row["NNodes"])} "
+        f"--ntasks-per-node={_get_ntasks_per_node(row["NCPUS"], row["NNodes"])} "
         f"-A {_get_account()} -p {_get_priority()} -q {_get_queue()} pseudo.job"
     )
     return job_string
 
 
-def _get_dtime(submit_time, first_submit_time):
+def _get_dtime(submit_time, first_submit_time) -> int:
     dtime = int(submit_time) - int(first_submit_time)
     return dtime
 
-def _get_sim_walltime():
-    pass
+def _get_sim_walltime(elapse: int):
+    return int(elapse)/60
 
 def _get_uid():
     randuid = randint(1, UID_RANGE)
@@ -49,22 +49,19 @@ def _get_uid():
     return uid
 
 def _get_request_time():
-    pass
+    return "00:01:00"
 
-def _get_n_nodes():
-    pass
-
-def _get_ntasks_per_node():
-    pass
+def _get_ntasks_per_node(cpus, nodes):
+    return int(cpus) // int(nodes) 
 
 def _get_account():
-    pass
+    return "account1"
 
 def _get_priority():
-    pass
+    return "normal"
 
 def _get_queue():
-    pass
+    return "normal"
 
 
 if __name__=="__main__()":
