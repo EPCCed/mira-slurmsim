@@ -10,8 +10,8 @@ import csv
 from random import randint
 
 
-SACCFILE = ""
-NEW_WORKLOAD_FILE = ""
+SACCFILE = "/home/decval/devel/slurm_sim_mira/test/2024_Q1_CPU-sacct-subset.csv"
+NEW_WORKLOAD_FILE = "q1events.events"
 
 UID_PREFIX = "user"
 UID_RANGE = 5
@@ -64,19 +64,21 @@ def _get_queue():
     return "normal"
 
 
-if __name__=="__main__()":
+if __name__ =="__main__":
     
     # Open an input and the new output file
     with open(SACCFILE, 'r') as csvfile, open(NEW_WORKLOAD_FILE, 'w') as outputfile:
+        print("Reading in SACC file")
         sacc_reader = csv.DictReader(csvfile, delimiter=",")
         # The outputfile is not standard csv...
 
-        # Get the first Submit time.
-        first_submit_time = next(sacc_reader)["Submit"]
-        # Move the file pointer back to the start as we
-        # still need to iterate over the whole file.
-        csvfile.seek(0)
-        
+        first_submit_time = 0
+        row = 0
         for row in sacc_reader:
-            new_row = convert_sacc_to_workload_row(row)
-            outputfile.write(new_row)
+            #breakpoint()
+            if row == 0:
+                first_submit = row["Submit"]
+                row = 1
+            else:
+                new_row = convert_sacc_to_workload_row(row, first_submit_time)
+                outputfile.writelines(new_row + "\n") 
