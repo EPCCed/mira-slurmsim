@@ -23,14 +23,14 @@ def convert_sacc_to_workload_row(row: dict, first_submit_time: int) -> str:
     """
 
     job_string = (
-        f"-dt {_get_dtime(row["Submit"], first_submit_time)} "
+        f"-dt {_get_dtime(row['Submit'], first_submit_time)} "
         f"-e submit_batch_job | "
-        f"-J jobid_{row["JobID"]} "
-        f"-sim-walltime {(row["ElapsedRaw"])} "
+        f"-J jobid_{row['JobID']} "
+        f"-sim-walltime {(row['ElapsedRaw'])} "
         f"--uid={_get_uid()} "
         f"-t {_get_request_time()} "
-        f"-n {int(row["NNodes"])} "
-        f"--ntasks-per-node={_get_ntasks_per_node(row["NCPUS"], row["NNodes"])} "
+        f"-n {int(row['NNodes'])} "
+        f"--ntasks-per-node={_get_ntasks_per_node(row['NCPUS'], row['NNodes'])} "
         f"-A {_get_account()} -p {_get_priority()} -q {_get_queue()} pseudo.job"
     )
     return job_string
@@ -52,7 +52,7 @@ def _get_request_time():
     return "00:01:00"
 
 def _get_ntasks_per_node(cpus, nodes):
-    return int(cpus) // int(nodes) 
+    return int(cpus) // int(nodes)
 
 def _get_account():
     return "account1"
@@ -63,22 +63,27 @@ def _get_priority():
 def _get_queue():
     return "normal"
 
-
-if __name__ =="__main__":
-    
+def process_sacc():
+    """
+    Process a complete Slurm sacct file into a 
+    slurm simulator events file."""
     # Open an input and the new output file
-    with open(SACCFILE, 'r') as csvfile, open(NEW_WORKLOAD_FILE, 'w') as outputfile:
+    with (open(SACCFILE, 'r', encoding="utf-8") as csvfile,
+          open(NEW_WORKLOAD_FILE, 'w', encoding="utf-8") as outputfile):
         print("Reading in SACC file")
         sacc_reader = csv.DictReader(csvfile, delimiter=",")
         # The outputfile is not standard csv...
 
         first_submit_time = 0
-        row = 0
+        row_count = 0
         for row in sacc_reader:
             #breakpoint()
-            if row == 0:
-                first_submit = row["Submit"]
-                row = 1
+            if row_count == 0:
+                first_submit_time = row["Submit"]
+                row_count = 1
             else:
                 new_row = convert_sacc_to_workload_row(row, first_submit_time)
-                outputfile.writelines(new_row + "\n") 
+                outputfile.writelines(new_row + "\n")
+
+if __name__ =="__main__":
+    process_sacc()
