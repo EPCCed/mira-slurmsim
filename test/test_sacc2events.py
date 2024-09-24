@@ -63,7 +63,3 @@ def test_get_account_id():
 
     # Assert
     assert result in account_strings
-
-
-
-
