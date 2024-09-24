@@ -2,9 +2,11 @@
 Unit tests for sacc2eventsfile.py
 """
 import re
+import pytest
 from utils.sacc2eventsfile import (convert_sacc_to_workload_row,
-                                   _get_dtime, _get_account)
+                                   _get_dtime, _get_account, DT_FACTOR)
 
+@pytest.mark.skipif(DT_FACTOR != 1, reason="Skip if DT_FACTOR != 1")
 def test_convert_sacc_to_workload():
     """Test"""
 
@@ -33,6 +35,7 @@ def test_convert_sacc_to_workload():
     # Assert
     #assert result == output_row
 
+
 def test_get_dtime_first():
     """Return the start time since simulator start for the
     job submission"""
@@ -43,6 +46,7 @@ def test_get_dtime_first():
     assert dtime == 0
 
 
+@pytest.mark.skipif(DT_FACTOR != 1, reason="Skip if DT_FACTOR set other than 1")
 def test_get_dtime_later():
     """Return the start time since simulator start for the
     job submission"""
