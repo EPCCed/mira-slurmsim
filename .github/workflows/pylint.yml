@@ -46,3 +46,6 @@ jobs:
       - name: Run tests
         run: |
           pytest -vs test/
+      - name: Run doctests
+        run: |
+          python -m doctest -v utils/sacc2eventsfile.py

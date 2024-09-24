@@ -52,6 +52,14 @@ def _get_request_time():
     return "00:01:00"
 
 def _get_ntasks_per_node(cpus, nodes):
+    """Calculates no of tasks per node
+    
+    Usage examples:
+    >>> _get_ntasks_per_node(60, 3)
+    20
+    >>> _get_ntasks_per_node(56, 3)
+    18
+    """
     return int(cpus) // int(nodes)
 
 def _get_account():
