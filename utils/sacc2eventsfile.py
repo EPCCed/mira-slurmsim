@@ -55,7 +55,9 @@ def _get_ntasks_per_node(cpus, nodes):
     return int(cpus) // int(nodes)
 
 def _get_account():
-    return "account1"
+    rand_account_id = randint(1, 2)
+    account_id = "account" + str(rand_account_id)
+    return account_id
 
 def _get_priority():
     return "normal"
@@ -77,9 +79,10 @@ def process_sacc():
         first_submit_time = 0
         row_count = 0
         for row in sacc_reader:
-            #breakpoint()
             if row_count == 0:
                 first_submit_time = row["Submit"]
+                first_row = convert_sacc_to_workload_row(row, first_submit_time)
+                outputfile.writelines(first_row + "\n")
                 row_count = 1
             else:
                 new_row = convert_sacc_to_workload_row(row, first_submit_time)
