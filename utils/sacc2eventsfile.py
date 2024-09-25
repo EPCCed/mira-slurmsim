@@ -2,7 +2,7 @@
 
 This utility converts raw accounting data from the SLURM accounting
 database and converts it into the "events file" format that is used
-in the SLURM Simulator. The events file is a plain text file where 
+in the SLURM Simulator. The events file is a plain text file where
 each row represents a job submission entry similar to what would be
 found in an sbatch submission command or script.
 """
@@ -59,7 +59,7 @@ def _get_request_time():
 
 def _get_ntasks_per_node(cpus, nodes):
     """Calculates no of tasks per node
-    
+
     Usage examples:
     >>> _get_ntasks_per_node(60, 3)
     20
@@ -81,7 +81,7 @@ def _get_queue():
 
 def process_sacc():
     """
-    Process a complete Slurm sacct file into a 
+    Process a complete Slurm sacct file into a
     slurm simulator events file."""
     # Open an input and the new output file
     with (open(SACCFILE, 'r', encoding="utf-8") as csvfile,

@@ -6,7 +6,7 @@ The SLURM simulator itself can be found at https://github.com/ubccr-slurm-simula
 
 ### Docker
 
-The simulator runs in a Docker container, and can be started either using the raw `Dockerfile` or set up using the `docker-compose.yml` file which generates persistent storage in the host machine so that the output files can be analysed outwith the container. 
+The simulator runs in a Docker container, and can be started either using the raw `Dockerfile` or set up using the `docker-compose.yml` file which generates persistent storage in the host machine so that the output files can be analysed outwith the container.
 
 ### Generating SLURM Sim workload files
 

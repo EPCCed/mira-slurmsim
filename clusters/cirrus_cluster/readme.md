@@ -38,12 +38,12 @@ Slurm Simulator: Micro Cluster Tutorial
 
 ``` bash
 # Check that MySQL Server is up
-ps -Af | grep mariadbd 
+ps -Af | grep mariadbd
 ```
 
     ## mysql      151    23  0 May29 pts/0    00:00:13 /usr/sbin/mariadbd --basedir=/usr --datadir=/var/lib/mysql --plugin-dir=/usr/lib/mysql/plugin --user=mysql --skip-log-error --pid-file=/run/mysqld/mysqld.pid --socket=/run/mysqld/mysqld.sock
     ## slurm    40241 38929  0 19:17 ?        00:00:00 sh -c 'bash'  -c '# Check that MySQL Server is up ps -Af | grep mariadbd ' 2>&1
-    ## slurm    40242 40241  0 19:17 ?        00:00:00 bash -c # Check that MySQL Server is up ps -Af | grep mariadbd 
+    ## slurm    40242 40241  0 19:17 ?        00:00:00 bash -c # Check that MySQL Server is up ps -Af | grep mariadbd
     ## slurm    40244 40242  0 19:17 ?        00:00:00 grep mariadbd
 
 ## Overview
@@ -418,7 +418,7 @@ slurmsim -v run_sim  -d \
         [INFO] slurmctld: /opt/slurm_sim/sbin/slurmctld
         [INFO] dropping db from previous runs
         DROP DATABASE IF EXISTS slurmdb_micro
-        [INFO] directory (/home/slurm/work/micro_cluster/log) does not exist, creating it 
+        [INFO] directory (/home/slurm/work/micro_cluster/log) does not exist, creating it
         [INFO] deleting previous SlurmdbdPidFile file: /home/slurm/work/micro_cluster/var/slurmdbd.pid
         [INFO] deleting previous StateSaveLocation files from /home/slurm/work/micro_cluster/var/state
         [DEBUG] Set stdout/stderr for slurmctld to /home/slurm/work/micro_cluster/log/slurmctld_stdout.log
@@ -444,7 +444,7 @@ slurmsim -v run_sim  -d \
           Description     = Account Name
           Organization    = Parent/Account Name
          Associations
-          A = account0   C = micro     
+          A = account0   C = micro
          Settings
           Fairshare     = 100
           Parent        = root
@@ -454,7 +454,7 @@ slurmsim -v run_sim  -d \
           Description     = Account Name
           Organization    = Parent/Account Name
          Associations
-          A = account1   C = micro     
+          A = account1   C = micro
          Settings
           Fairshare     = 100
           Parent        = root
@@ -464,7 +464,7 @@ slurmsim -v run_sim  -d \
           Description     = Account Name
           Organization    = Parent/Account Name
          Associations
-          A = account2   C = micro     
+          A = account2   C = micro
          Settings
           Fairshare     = 100
           Parent        = root
@@ -474,7 +474,7 @@ slurmsim -v run_sim  -d \
           Default Account = account0
           Admin Level     = Administrator
          Associations =
-          U = admin     A = account0   C = micro     
+          U = admin     A = account0   C = micro
          Non Default Settings
           MaxSubmitJobs = 1000
         sacctmgr: sacctmgr:  Adding User(s)
@@ -482,7 +482,7 @@ slurmsim -v run_sim  -d \
          Settings =
           Default Account = account1
          Associations =
-          U = user1     A = account1   C = micro     
+          U = user1     A = account1   C = micro
          Non Default Settings
           MaxSubmitJobs = 1000
         sacctmgr:  Adding User(s)
@@ -490,7 +490,7 @@ slurmsim -v run_sim  -d \
          Settings =
           Default Account = account1
          Associations =
-          U = user2     A = account1   C = micro     
+          U = user2     A = account1   C = micro
          Non Default Settings
           MaxSubmitJobs = 1000
         sacctmgr:  Adding User(s)
@@ -498,7 +498,7 @@ slurmsim -v run_sim  -d \
          Settings =
           Default Account = account1
          Associations =
-          U = user3     A = account1   C = micro     
+          U = user3     A = account1   C = micro
          Non Default Settings
           MaxSubmitJobs = 1000
         sacctmgr:  Adding User(s)
@@ -506,7 +506,7 @@ slurmsim -v run_sim  -d \
          Settings =
           Default Account = account2
          Associations =
-          U = user4     A = account2   C = micro     
+          U = user4     A = account2   C = micro
          Non Default Settings
           MaxSubmitJobs = 1000
         sacctmgr:  Adding User(s)
@@ -514,31 +514,31 @@ slurmsim -v run_sim  -d \
          Settings =
           Default Account = account2
          Associations =
-          U = user5     A = account2   C = micro     
+          U = user5     A = account2   C = micro
          Non Default Settings
           MaxSubmitJobs = 1000
         sacctmgr: sacctmgr:  Modified user associations...
-          C = micro      A = account2             U = user5    
-          C = micro      A = account2             U = user4    
-          C = micro      A = account1             U = user3    
-          C = micro      A = account1             U = user2    
-          C = micro      A = account1             U = user1    
-          C = micro      A = account0             U = admin    
-          C = micro      A = root                 U = root     
-        sacctmgr: sacctmgr: sacctmgr: Account                 Cluster       User     Share 
-        -------------------- ---------- ---------- --------- 
-        root                      micro                    1 
-         root                     micro       root         1 
-         account0                 micro                  100 
-          account0                micro      admin         1 
-         account1                 micro                  100 
-          account1                micro      user1         1 
-          account1                micro      user2         1 
-          account1                micro      user3         1 
-         account2                 micro                  100 
-          account2                micro      user4         1 
-          account2                micro      user5         1 
-        sacctmgr: 
+          C = micro      A = account2             U = user5
+          C = micro      A = account2             U = user4
+          C = micro      A = account1             U = user3
+          C = micro      A = account1             U = user2
+          C = micro      A = account1             U = user1
+          C = micro      A = account0             U = admin
+          C = micro      A = root                 U = root
+        sacctmgr: sacctmgr: sacctmgr: Account                 Cluster       User     Share
+        -------------------- ---------- ---------- ---------
+        root                      micro                    1
+         root                     micro       root         1
+         account0                 micro                  100
+          account0                micro      admin         1
+         account1                 micro                  100
+          account1                micro      user1         1
+          account1                micro      user2         1
+          account1                micro      user3         1
+         account2                 micro                  100
+          account2                micro      user4         1
+          account2                micro      user5         1
+        sacctmgr:
         [INFO] Launching slurmctld
         ['/opt/slurm_sim/sbin/slurmctld', '-e', '/home/slurm/work/micro_cluster/job_traces/small.events', '-dtstart', '59']
         [INFO] Current time 1710513133.6579173
@@ -742,7 +742,7 @@ sacct <- read_sacct_out_multiple(
 )
 ```
 
-    ## Read:  results/slurmsimcont/test1/dtstart_59_1/slurm_acct.out 
+    ## Read:  results/slurmsimcont/test1/dtstart_59_1/slurm_acct.out
     ## Read:  results/slurmsimcont/test1/dtstart_79_1/slurm_acct.out
 
 ``` r
@@ -778,7 +778,7 @@ events_time <- read_events_multiple(
 )
 ```
 
-    ## Read:  results/slurmsimcont/test1/dtstart_59_1/slurmctld_log.csv 
+    ## Read:  results/slurmsimcont/test1/dtstart_59_1/slurmctld_log.csv
     ## Read:  results/slurmsimcont/test1/dtstart_79_1/slurmctld_log.csv
 
 ``` r
@@ -946,15 +946,15 @@ sacct <- read_sacct_out_multiple(
 )
 ```
 
-    ## Read:  results/slurmsimcont/test2/dtstart_59_1/slurm_acct.out 
-    ## Read:  results/slurmsimcont/test2/dtstart_58_1/slurm_acct.out 
-    ## Read:  results/slurmsimcont/test2/dtstart_99_1/slurm_acct.out 
-    ## Read:  results/slurmsimcont/test2/dtstart_126_1/slurm_acct.out 
-    ## Read:  results/slurmsimcont/test2/dtstart_79_1/slurm_acct.out 
-    ## Read:  results/slurmsimcont/test2/dtstart_89_1/slurm_acct.out 
-    ## Read:  results/slurmsimcont/test2/dtstart_146_1/slurm_acct.out 
-    ## Read:  results/slurmsimcont/test2/dtstart_105_1/slurm_acct.out 
-    ## Read:  results/slurmsimcont/test2/dtstart_114_1/slurm_acct.out 
+    ## Read:  results/slurmsimcont/test2/dtstart_59_1/slurm_acct.out
+    ## Read:  results/slurmsimcont/test2/dtstart_58_1/slurm_acct.out
+    ## Read:  results/slurmsimcont/test2/dtstart_99_1/slurm_acct.out
+    ## Read:  results/slurmsimcont/test2/dtstart_126_1/slurm_acct.out
+    ## Read:  results/slurmsimcont/test2/dtstart_79_1/slurm_acct.out
+    ## Read:  results/slurmsimcont/test2/dtstart_89_1/slurm_acct.out
+    ## Read:  results/slurmsimcont/test2/dtstart_146_1/slurm_acct.out
+    ## Read:  results/slurmsimcont/test2/dtstart_105_1/slurm_acct.out
+    ## Read:  results/slurmsimcont/test2/dtstart_114_1/slurm_acct.out
     ## Read:  results/slurmsimcont/test2/dtstart_68_1/slurm_acct.out
 
 ``` r
@@ -967,15 +967,15 @@ events_time <- read_events_multiple(
 )
 ```
 
-    ## Read:  results/slurmsimcont/test2/dtstart_59_1/slurmctld_log.csv 
-    ## Read:  results/slurmsimcont/test2/dtstart_58_1/slurmctld_log.csv 
-    ## Read:  results/slurmsimcont/test2/dtstart_99_1/slurmctld_log.csv 
-    ## Read:  results/slurmsimcont/test2/dtstart_126_1/slurmctld_log.csv 
-    ## Read:  results/slurmsimcont/test2/dtstart_79_1/slurmctld_log.csv 
-    ## Read:  results/slurmsimcont/test2/dtstart_89_1/slurmctld_log.csv 
-    ## Read:  results/slurmsimcont/test2/dtstart_146_1/slurmctld_log.csv 
-    ## Read:  results/slurmsimcont/test2/dtstart_105_1/slurmctld_log.csv 
-    ## Read:  results/slurmsimcont/test2/dtstart_114_1/slurmctld_log.csv 
+    ## Read:  results/slurmsimcont/test2/dtstart_59_1/slurmctld_log.csv
+    ## Read:  results/slurmsimcont/test2/dtstart_58_1/slurmctld_log.csv
+    ## Read:  results/slurmsimcont/test2/dtstart_99_1/slurmctld_log.csv
+    ## Read:  results/slurmsimcont/test2/dtstart_126_1/slurmctld_log.csv
+    ## Read:  results/slurmsimcont/test2/dtstart_79_1/slurmctld_log.csv
+    ## Read:  results/slurmsimcont/test2/dtstart_89_1/slurmctld_log.csv
+    ## Read:  results/slurmsimcont/test2/dtstart_146_1/slurmctld_log.csv
+    ## Read:  results/slurmsimcont/test2/dtstart_105_1/slurmctld_log.csv
+    ## Read:  results/slurmsimcont/test2/dtstart_114_1/slurmctld_log.csv
     ## Read:  results/slurmsimcont/test2/dtstart_68_1/slurmctld_log.csv
 
 ## Analyse the Results

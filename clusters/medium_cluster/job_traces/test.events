@@ -23,4 +23,3 @@
 -dt 3 -e submit_batch_job | -sim-walltime 300 --uid=user002 -J reg1node -q general-compute -N 2 --ntasks-per-node=32 -t 5:00 pseudo.job
 -dt 3 -e submit_batch_job | -sim-walltime 300 --uid=user002 -J reg1node -q general-compute -N 4 --ntasks-per-node=32 -t 5:00 pseudo.job
 -dt 3 -e submit_batch_job | -sim-walltime 300 --uid=user002  -cancel-in 10.5 -J reg1node -q general-compute -N 8 --ntasks-per-node=32 -t 5:00 pseudo.job
-
