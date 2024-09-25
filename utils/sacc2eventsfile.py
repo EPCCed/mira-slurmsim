@@ -15,7 +15,7 @@ NEW_WORKLOAD_FILE = "q1events.events"
 
 UID_PREFIX = "user"
 UID_RANGE = 5
-# dt time in slurm sim can be too long if measured in seconds on real 
+# dt time in slurm sim can be too long if measured in seconds on real
 # accounting data.
 # Use this factor to divide through
 DT_FACTOR = 1
@@ -43,9 +43,8 @@ def convert_sacc_to_workload_row(row: dict, first_submit_time: int) -> str:
 def _get_dtime(submit_time, first_submit_time) -> int:
     dtime = int(submit_time) - int(first_submit_time)
     if DT_FACTOR > 1:
-      return dtime/DT_FACTOR
-    else:
-      return dtime
+        return dtime/DT_FACTOR
+    return dtime
 
 def _get_sim_walltime(elapse: int):
     return int(elapse)/60
