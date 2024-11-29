@@ -1,6 +1,6 @@
 services:
   slurm-mira:
-    image: dvalts/slurm-sim-cirrus
+    image: decvalts/slurm_sim_lite
     container_name: slurmsim
     hostname: slurmsim
     build:
