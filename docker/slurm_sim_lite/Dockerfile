@@ -1,129 +1,127 @@
-FROM centos:7
+FROM ubuntu:22.04
 
-LABEL desc="Slurm simulator made ready"
-
-#Adding in the code from github to be able to start/stop mysql (and sshd?)
-COPY cmd_start /sbin/
-COPY cmd_stop /sbin/
-
-
-# giving permissions to use the cmd from above
-RUN \
-	chmod a+rwx /sbin/cmd_start && \
-	chmod a+rwx /sbin/cmd_stop && \
-        mkdir /install_files && \
-        useradd -d /home/slurm -ms /bin/bash slurm && \
-        usermod -aG wheel slurm && \
-        echo "slurm:slurm"|chpasswd && \
-        echo "Added slurm user" && \
-	yum -y install git && \
-	yum clean all
-
-# getting file that installs all the R packages
-COPY ./package_install.R /install_files
-
-# creating all the directories needed for larger run command
-USER slurm 
-RUN \
-        cd /home/slurm && \
-        mkdir slurm_sim_ws && \
-        cd slurm_sim_ws && \
-        mkdir sim && \
-        cd /home/slurm/slurm_sim_ws && \
-        git clone https://github.com/ubccr-slurm-simulator/slurm_sim_tools.git
+LABEL desc="UB Slurm simulator Lite"
 
 USER root
 
+# install build and run essential
+RUN apt update && \
+    apt install -y build-essential git sudo vim zstd libzstd-dev && \
+    apt install -y munge libmunge-dev libhdf5-dev \
+        libjwt-dev libyaml-dev libdbus-1-dev \
+        libmariadb-dev mariadb-server mariadb-client && \
+    apt install -y libssl-dev openssh-server openssh-client libssh-dev
 
-# installing mysql (mariadb), python, and R, setting everything up all in one Run command 
-RUN \
-	yum -y install mariadb-server && \
-	yum -y install mariadb-devel && \
-	echo "Done installing Mariadb" && \
-	yum -y install gcc-c++ && \
-	yum -y install install epel-release && \
-	yum -y install python36 python36-libs python36-devel python36-numpy python36-scipy python36-pip
+# # rename user:group to slurm:slurm
+ARG SLURM_USER="slurm"
+ARG SLURM_GROUP="slurm"
+ARG SLURM_GID="1000"
 
-RUN \
-	pip3 install pymysql && \
-	pip3 install pandas && \
-	echo "Python all installed" && \
-	yum -y install R R-Rcpp R-Rcpp-devel && \
-	yum -y install python-devel && \
-	yum -y install texlive-* && \
-	echo "R all installed" && \
-	Rscript /install_files/package_install.R && \
-        echo "Installed R packages" && \
-        yum -y install sudo && \
-        yum -y install wget && \
-	echo "Sudo, git, wget installed" && \
-        wget https://download2.rstudio.org/server/centos6/x86_64/rstudio-server-rhel-1.2.5042-x86_64.rpm && \
-        sudo yum -y install rstudio-server-rhel-1.2.5042-x86_64.rpm && \
-        yum -y install initscripts && \
-	echo "Rstudio server installed" && \
-        yum -y install openssh openssh-server openssh-clients openssl-libs && \
-        mkdir /var/run/sshd && \
-        ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' && \
-        ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N '' && \
-        ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N '' && \
-	echo "Ssh installed" && \
-        chmod g+rw /var/lib/mysql /var/log/mariadb /var/run/mariadb && \
-        mysql_install_db && \
-        chown -R mysql:mysql /var/lib/mysql && \
-        cmd_start mysqld && \
-        mysql -e "create user 'slurm'@'localhost' identified by 'slurm';" && \
-        mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'slurm'@'localhost' IDENTIFIED BY 'slurm';" && \
-        cmd_stop mysqld && \
-	yum clean all
+ENV SLURM_USER="${SLURM_USER}" \
+    SLURM_GROUP="${SLURM_GROUP}" \
+    SLURM_GID=${SLURM_GID}
 
+RUN useradd -m -s /bin/bash ${SLURM_USER} && \
+    usermod -g ${SLURM_GROUP} ${SLURM_USER} && \
+    usermod -a -G users ${SLURM_USER} && \
+    usermod -a -G sudo ${SLURM_USER} &&  \
+    echo "${SLURM_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    echo "${SLURM_USER}:slurm" |chpasswd && \
+    chown -R ${SLURM_USER}:${SLURM_GROUP} /opt
 
-# switch to slurm user so the next directories made are owned by slurm
-USER slurm 
+ENV HOME="/home/${SLURM_USER}"
 
-# installing slurm simulator
-RUN \
-	cd /home/slurm/slurm_sim_ws && \
-        git clone https://github.com/ubccr-slurm-simulator/slurm_simulator.git && \
-        cd slurm_simulator && \
-        cd .. && \
-        mkdir bld_opt && \
-        cd bld_opt && \
-        ../slurm_simulator/configure --prefix=/home/slurm/slurm_sim_ws/slurm_opt --enable-simulator \
---enable-pam --without-munge --enable-front-end --with-mysql-config=/usr/bin/ --disable-debug \
-CFLAGS="-g -O3 -D NDEBUG=1" && \
-        make -j install
+# copy daemons starters
+COPY ./docker/slurm_sim/cmd_start ./docker/slurm_sim/cmd_stop /usr/local/sbin/
+# COPY ./docker/virtual_cluster/vctools /opt/cluster/vctools
 
+# directories
+RUN mkdir /scratch && chmod 777 /scratch && \
+    mkdir /scratch/jobs && chmod 777 /scratch/jobs
 
-# 8787 is the default port that rstudio server uses, so need to expose it to use it
-EXPOSE 8787
+# configure sshd
+RUN mkdir /var/run/sshd && \
+    echo 'root:root' |chpasswd && \
+    echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
 
+# setup munge,
+RUN echo "secret munge key secret munge key secret munge key" >/etc/munge/munge.key &&\
+    mkdir /run/munge  &&\
+    chown -R slurm:slurm /var/log/munge /run/munge /var/lib/munge /etc/munge &&\
+    chmod 600 /etc/munge/munge.key &&\
+    su slurm -c "cmd_start munged" &&\
+    munge -n | unmunge &&\
+    su slurm -c "cmd_stop munged"
 
-USER root
+#configure mysqld
+RUN cmd_start mysqld && \
+    mysql -e 'DROP DATABASE IF EXISTS test;' && \
+    mysql -e "CREATE USER 'slurm'@'%' IDENTIFIED BY 'slurm';" && \
+    mysql -e 'GRANT ALL PRIVILEGES ON *.* TO "slurm"@"%" WITH GRANT OPTION;' && \
+    mysql -e "CREATE USER 'slurm'@'localhost' IDENTIFIED BY 'slurm';" && \
+    mysql -e 'GRANT ALL PRIVILEGES ON *.* TO "slurm"@"localhost" WITH GRANT OPTION;' && \
+    cmd_stop mysqld
 
+# set Slurm permissions, largely not needed for slurm sim
+RUN mkdir /var/log/slurm  && \
+    chown -R slurm:slurm /var/log/slurm  && \
+    mkdir /install_files  && \
+    chown -R slurm:slurm /install_files  && \
+    mkdir /var/state  && \
+    chown -R slurm:slurm /var/state  && \
+    mkdir -p /var/spool/slurmd  && \
+    chown -R slurm:slurm /var/spool/slurmd && \
+    touch /bin/mail  && chmod 755 /bin/mail
 
-COPY ./startup_file.sh /install_files
-COPY ./initial_test.sh /install_files
-COPY ./micro_cluster_setup.py /install_files
-COPY ./micro_ws_config.sh /install_files
-COPY ./populate_slurmdb.sh /install_files
-COPY ./generate_job_trace.sh /install_files
-COPY ./run_sim.sh /install_files
-COPY ./check_results.R /install_files
+#CMD ["/init"]
 
+USER ${SLURM_USER}
+WORKDIR "${HOME}"
 
-# need to expose port 22 to allow for ssh to work properly
-EXPOSE 22 
+COPY --chown=${SLURM_USER}:${SLURM_GROUP} . /opt/slurm_sim_tools
 
+COPY --chown=${SLURM_USER}:${SLURM_GROUP} ./docker/slurm_sim_lite/startup_file.sh /install_files
 
-# expose for mysql use
-EXPOSE 3306
+RUN chmod +x /install_files/startup_file.sh
+#COPY ./initial_test.sh /install_files
 
 
-# back to root for easier permissions stuff
-RUN \
-	chmod -R a+rwx /install_files
+# build optimized version of SLURM SIM
+RUN mkdir -p /opt/slurm_sim_bld/slurm_sim_opt && \
+    cd /opt/slurm_sim_bld/slurm_sim_opt && \
+    /opt/slurm_sim_tools/slurm_simulator/configure --prefix=/opt/slurm_sim \
+        --disable-x11 --enable-front-end \
+        --with-hdf5=no \
+        CFLAGS='-O3 -Wno-error=unused-variable -Wno-error=implicit-function-declaration' \
+        --enable-simulator && \
+    make -j 8 && \
+    make -j 8 install && \
+    mkdir -p /opt/slurm_sim_bld/slurm_sim_deb && \
+    cd /opt/slurm_sim_bld/slurm_sim_deb && \
+    /opt/slurm_sim_tools/slurm_simulator/configure --prefix=/opt/slurm_sim_deb \
+        --disable-x11 --enable-front-end \
+        --enable-developer --disable-optimizations --enable-debug \
+        --with-hdf5=no \
+       'CFLAGS=-g -O0 -Wno-error=unused-variable -Wno-error=implicit-function-declaration' \
+       --enable-simulator && \
+    make -j 8 && \
+    make -j 8 install
 
+ENV PATH="/opt/slurm_sim_tools/bin:$PATH" \
+    PYTHONPATH="/opt/slurm_sim_tools/src"  
+    # do we need  :$PYHTONPATH here?
 
-# sets cmd_start as entrypoint, then runs the startup file and the initial test file
-ENTRYPOINT ["/sbin/cmd_start"]
-CMD ["/install_files/startup_file.sh","/install_files/initial_test.sh"]
+# timezone is set to America/New_York change to your zone, tzdata is dependency of jupyterlab
+RUN sudo ln -fs /usr/share/zoneinfo/Europe/London /etc/localtime && \
+   echo "Europe/London" | sudo tee /etc/timezone && \
+   sudo DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata
+
+# python
+ARG DEBIAN_FRONTEND=noninteractive
+RUN  sudo apt install -y python3-pandas \
+    python3-pip python3-arrow cython3 python3-pymysql python3-pytest python3-pytest-datadir \
+    python3-venv python3-psutil python3-tqdm
+
+USER ${SLURM_USER}
+
+CMD ["/install_files/startup_file.sh"]

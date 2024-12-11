@@ -1,0 +1,14 @@
+services:
+  slurm-mira:
+    image: slurm_sim_lite
+    container_name: decvalts/slurmsim
+    hostname: slurmsim
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - type: bind
+        source: ./clusters
+        target: /home/slurm/work
+volumes:
+  clusters:
