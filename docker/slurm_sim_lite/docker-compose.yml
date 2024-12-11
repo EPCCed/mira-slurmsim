@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - type: bind
-        source: ./clusters
+        source: ./../clusters
         target: /home/slurm/work
 volumes:
   clusters:

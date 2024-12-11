@@ -33,7 +33,7 @@ ENV HOME="/home/${SLURM_USER}"
 
 # copy daemons starters
 COPY ./docker/slurm_sim_lite/cmd_start ./docker/slurm_sim_lite/cmd_stop /usr/local/sbin/
-COPY --chown=${SLURM_USER}:${SLURM_GROUP} ./docker/slurm_sim_lite/ /opt/slurm_sim_tools/
+COPY --chown=${SLURM_USER}:${SLURM_GROUP} ./docker/slurm_sim_lite/8 /opt/slurm_sim_tools/
 COPY --chown=${SLURM_USER}:${SLURM_GROUP} ./docker/slurm_sim_lite/startup_file.sh /install_files/
 # COPY ./docker/virtual_cluster/vctools /opt/cluster/vctools
 
