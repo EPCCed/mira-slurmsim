@@ -1,5 +1,3 @@
-# use jupyter/datascience-notebook:2024-02-13 x86_64-2023-10-20
-
 FROM ubuntu:22.04
 
 LABEL desc="UB Slurm simulator Lite"
@@ -127,4 +125,3 @@ RUN  sudo apt install -y python3-pandas \
 USER ${SLURM_USER}
 
 CMD ["/install_files/startup_file.sh"]
-
